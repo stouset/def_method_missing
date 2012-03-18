@@ -54,4 +54,10 @@ describe 'Object with method missing patterns' do
     subject.foobaz.must_equal 1
     subject.barbaz.must_equal 2
   end
+
+  it 'must bypass method_missing after the first call' do
+    -> { subject.method(:foo) }.must_raise NameError
+    subject.foo
+    subject.method(:foo).must_be_kind_of Method
+  end
 end
