@@ -18,9 +18,9 @@ end
 describe 'Object with method missing patterns' do
   subject do
     Class.new do
-      def_method_missing(/foo/)  { 1 }
-      def_method_missing(/bar/)  { 2 }
-      def_method_missing(/baz$/) { 3 }
+      def_method_missing(/foo/)  {|match| -> { match[0] } }
+      def_method_missing(/bar/)  {|match| -> { match[0] } }
+      def_method_missing(/baz$/) {|match| -> { match[0] } }
     end.new
   end
 
@@ -43,16 +43,16 @@ describe 'Object with method missing patterns' do
   end
 
   it 'must implement matching method names' do
-    subject.foo   .must_equal 1
-    subject.barfoo.must_equal 1
-    subject.bar   .must_equal 2
-    subject.abbbaz.must_equal 3
+    subject.foo   .must_equal 'foo'
+    subject.barfoo.must_equal 'foo'
+    subject.bar   .must_equal 'bar'
+    subject.abbbaz.must_equal 'baz'
   end
 
   it 'must match in the defined order' do
-    subject.foobar.must_equal 1
-    subject.foobaz.must_equal 1
-    subject.barbaz.must_equal 2
+    subject.foobar.must_equal 'foo'
+    subject.foobaz.must_equal 'foo'
+    subject.barbaz.must_equal 'bar'
   end
 
   it 'must bypass method_missing after the first call' do
